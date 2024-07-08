@@ -9,6 +9,9 @@ import { Product } from '../../types/product/product';
 import Link from 'next/link';
 import { ProductsInquiry } from '../../types/product/product.input';
 import PopularProductCard from './PopularProductCard';
+import { GET_PRODUCTS } from '../../../apollo/user/query';
+import { useQuery } from '@apollo/client';
+import { T } from '../../types/common';
 
 interface PopularProductsProps {
 	initialInput: ProductsInquiry;
@@ -20,6 +23,21 @@ const PopularProducts = (props: PopularProductsProps) => {
 	const [popularProducts, setPopularProducts] = useState<Product[]>([]);
 
 	/** APOLLO REQUESTS **/
+
+	const {
+		loading: getProductsLoading, // bu processda aniq animationlardi korsatar ekan
+		data: getProductsData, // data kirib kelgunga qadar error bulsa pasdagi erroni beradi
+		error: getProductsError,
+		refetch: getProductsRefetch,
+	} = useQuery(GET_PRODUCTS, {
+		fetchPolicy: "cache-and-network", // birinchi cache oqib keyin networkga o'tiladi
+		variables: {input: initialInput},
+		notifyOnNetworkStatusChange:true,
+		onCompleted: (data: T) => { 
+			setPopularProducts(data?.getProducts?.list);
+		},
+	});
+
 	/** HANDLERS **/
 
 	if (!popularProducts) return null;
