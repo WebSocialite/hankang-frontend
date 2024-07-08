@@ -1,5 +1,5 @@
 {
-	"name": "nestar-next",
+	"name": "hankang-frontend",
 	"version": "2.2.0",
 	"private": true,
 	"license": "ITC",
@@ -67,14 +67,19 @@
 		"swiper": "^8.3.1",
 		"view": "^1.1.1",
 		"@pmndrs/branding": "0.0.8",
-		"@react-three/drei": "9.58.5",
-		"@react-three/fiber": "8.12.0",
-		"@types/three": "0.150.0",
-		"three": "0.150.1",
 		"valtio": "1.10.3",
-		"react-scripts": "4.0.3",
 		"numeral": "^2.0.6",
-		"react-scrollable-feed": "^1.3.2"
+		"react-scrollable-feed": "^1.3.2",
+		"@react-three/cannon": "6.5.2",
+		"@react-three/drei": "9.69.1",
+		"@react-three/fiber": "8.13.0",
+		"@react-three/postprocessing": "2.13.0",
+		"@react-three/rapier": "0.13.2",
+		"@types/three": "0.153.0",
+		"leva": "0.9.34",
+		"maath": "0.5.3",
+		"react-scripts": "5.0.1",
+		"three": "0.152.2"
 	},
 	"devDependencies": {
 		"@types/react": "18.2.0",

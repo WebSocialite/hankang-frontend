@@ -28,18 +28,18 @@ const withLayoutBasic = (Component: any) => {
 				bgImage = '';
 
 			switch (router.pathname) {
-				case '/property':
-					title = 'Property Search';
+				case '/product':
+					title = 'Product Search';
 					desc = 'We are glad to see you again!';
 					bgImage = '/img/banner/properties.png';
 					break;
-				case '/agent':
-					title = 'Agents';
+				case '/seller':
+					title = 'Sellers';
 					desc = 'Home / For Rent';
 					bgImage = '/img/banner/agents.webp';
 					break;
-				case '/agent/detail':
-					title = 'Agent Page';
+				case '/seller/detail':
+					title = 'Seller Page';
 					desc = 'Home / For Rent';
 					bgImage = '/img/banner/header2.svg';
 					break;
@@ -93,8 +93,8 @@ const withLayoutBasic = (Component: any) => {
 			return (
 				<>
 					<Head>
-						<title>Nestar</title>
-						<meta name={'title'} content={`Nestar`} />
+						<title>Hankang</title>
+						<meta name={'title'} content={`Hankang`} />
 					</Head>
 					<Stack id="mobile-wrap">
 						<Stack id={'top'}>
@@ -115,8 +115,8 @@ const withLayoutBasic = (Component: any) => {
 			return (
 				<>
 					<Head>
-						<title>Nestar</title>
-						<meta name={'title'} content={`Nestar`} />
+						<title>Hankang</title>
+						<meta name={'title'} content={`Hankang`} />
 					</Head>
 					<Stack id="pc-wrap">
 						<Stack id={'top'}>

@@ -3,210 +3,243 @@ import { gql } from '@apollo/client';
 /**************************
  *         MEMBER         *
  *************************/
-
-export const SIGN_UP = gql`
-	mutation Signup($input: MemberInput!) {
-		signup(input: $input) {
-			_id
-			memberType
-			memberStatus
-			memberAuthType
-			memberPhone
-			memberNick
-			memberFullName
-			memberImage
-			memberAddress
-			memberDesc
-			memberWarnings
-			memberBlocks
-			memberProperties
-			memberRank
-			memberArticles
-			memberPoints
-			memberLikes
-			memberViews
-			deletedAt
-			createdAt
-			updatedAt
-			accessToken
-		}
-	}
+ export const SIGN_UP = gql`
+ mutation Signup($input: MemberInput!) {
+    signup(input: $input) {
+        _id
+        memberType
+        memberStatus
+        memberAuthType
+        memberPhone
+        memberNick
+        memberFullName
+        memberImage
+        memberAddress
+        memberDesc
+        memberProducts
+        memberArticles
+        memberFollowers
+        memberFollowings
+        memberPoints
+        memberLikes
+        memberViews
+        memberComments
+        memberRank
+        memberWarnings
+        memberBlocks
+        deletedAt
+        createdAt
+        updatedAt
+        accessToken
+    }
+}
 `;
+
 
 export const LOGIN = gql`
 	mutation Login($input: LoginInput!) {
-		login(input: $input) {
-			_id
-			memberType
-			memberStatus
-			memberAuthType
-			memberPhone
-			memberNick
-			memberFullName
-			memberImage
-			memberAddress
-			memberDesc
-			memberWarnings
-			memberBlocks
-			memberProperties
-			memberRank
-			memberPoints
-			memberLikes
-			memberViews
-			deletedAt
-			createdAt
-			updatedAt
-			accessToken
-		}
-	}
+    login(input: $input) {
+        _id
+        memberType
+        memberStatus
+        memberAuthType
+        memberPhone
+        memberNick
+        memberFullName
+        memberImage
+        memberAddress
+        memberDesc
+        memberProducts
+        memberArticles
+        memberFollowers
+        memberFollowings
+        memberPoints
+        memberLikes
+        memberViews
+        memberComments
+        memberRank
+        memberWarnings
+        memberBlocks
+        deletedAt
+        createdAt
+        updatedAt
+        accessToken
+    }
+}
+
 `;
 
 export const UPDATE_MEMBER = gql`
 	mutation UpdateMember($input: MemberUpdate!) {
-		updateMember(input: $input) {
-			_id
-			memberType
-			memberStatus
-			memberAuthType
-			memberPhone
-			memberNick
-			memberFullName
-			memberImage
-			memberAddress
-			memberDesc
-			memberProperties
-			memberRank
-			memberArticles
-			memberPoints
-			memberLikes
-			memberViews
-			memberWarnings
-			memberBlocks
-			deletedAt
-			createdAt
-			updatedAt
-			accessToken
-		}
-	}
+    updateMember(input: $input) {
+        _id
+        memberType
+        memberStatus
+        memberAuthType
+        memberPhone
+        memberNick
+        memberFullName
+        memberImage
+        memberAddress
+        memberDesc
+        memberProducts
+        memberArticles
+        memberFollowers
+        memberFollowings
+        memberPoints
+        memberLikes
+        memberViews
+        memberComments
+        memberRank
+        memberWarnings
+        memberBlocks
+        deletedAt
+        createdAt
+        updatedAt
+        accessToken
+    }
+}
 `;
 
 export const LIKE_TARGET_MEMBER = gql`
 	mutation LikeTargetMember($input: String!) {
-		likeTargetMember(memberId: $input) {
-			_id
-			memberType
-			memberStatus
-			memberAuthType
-			memberPhone
-			memberNick
-			memberFullName
-			memberImage
-			memberAddress
-			memberDesc
-			memberWarnings
-			memberBlocks
-			memberProperties
-			memberRank
-			memberPoints
-			memberLikes
-			memberViews
-			deletedAt
-			createdAt
-			updatedAt
-			accessToken
-		}
-	}
+    likeTargetMember(memberId: $input) {
+        _id
+        memberType
+        memberStatus
+        memberAuthType
+        memberPhone
+        memberNick
+        memberFullName
+        memberImage
+        memberAddress
+        memberDesc
+        memberProducts
+        memberArticles
+        memberFollowers
+        memberFollowings
+        memberPoints
+        memberLikes
+        memberViews
+        memberComments
+        memberRank
+        memberWarnings
+        memberBlocks
+        deletedAt
+        createdAt
+        updatedAt
+        accessToken
+    }
+}
+
 `;
 
 /**************************
- *        PROPERTY        *
+ *        PRODUCT        *
  *************************/
 
-export const CREATE_PROPERTY = gql`
-	mutation CreateProperty($input: PropertyInput!) {
-		createProperty(input: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
+export const CREATE_PRODUCT = gql`
+	mutation CreateProduct($input: ProductInput!) {
+    createProduct(input: $input) {
+        _id
+        productType
+        productAddress
+        productTitle
+        productPrice
+        productViews
+        productLikes
+        productComments
+        productRank
+        productDesc
+        memberId
+        createdAt
+        soldAt
+        deletedAt
+        constructedAt
+        updatedAt
+        memberData {
+            _id
+            memberType
+            memberStatus
+            memberAuthType
+            memberPhone
+            memberNick
+            memberFullName
+            memberImage
+            memberAddress
+            memberDesc
+            memberProducts
+            memberArticles
+            memberFollowers
+            memberFollowings
+            memberPoints
+            memberLikes
+            memberViews
+            memberComments
+            memberRank
+            memberWarnings
+            memberBlocks
+            deletedAt
+            createdAt
+            updatedAt
+            accessToken
+        }
+        productImages
+    }
+}
+
 `;
 
-export const UPDATE_PROPERTY = gql`
-	mutation UpdateProperty($input: PropertyUpdate!) {
-		updateProperty(input: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
+export const UPDATE_PRODUCT = gql`
+	mutation UpdateProduct($input: ProductUpdate!) {
+    updateProduct(input: $input) {
+        _id
+        productType
+        productStatus
+        productAddress
+        productTitle
+        productPrice
+        productViews
+        productLikes
+        productComments
+        productRank
+        productImages
+        productDesc
+        memberId
+        createdAt
+        soldAt
+        deletedAt
+        constructedAt
+        updatedAt
+    }
+}
+
 `;
 
-export const LIKE_TARGET_PROPERTY = gql`
-	mutation LikeTargetProperty($input: String!) {
-		likeTargetProperty(propertyId: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
+export const LIKE_TARGET_PRODUCT = gql`
+	mutation LikeTargetProduct($input: String!) {
+    likeTargetProduct(memberId: $input) {
+        _id
+        productType
+        productStatus
+        productAddress
+        productTitle
+        productPrice
+        productViews
+        productLikes
+        productComments
+        productRank
+        productImages
+        productDesc
+        memberId
+        createdAt
+        soldAt
+        deletedAt
+        constructedAt
+        updatedAt
+    }
+}
+
 `;
 
 /**************************
@@ -215,56 +248,62 @@ export const LIKE_TARGET_PROPERTY = gql`
 
 export const CREATE_BOARD_ARTICLE = gql`
 	mutation CreateBoardArticle($input: BoardArticleInput!) {
-		createBoardArticle(input: $input) {
-			_id
-			articleCategory
-			articleStatus
-			articleTitle
-			articleContent
-			articleImage
-			articleViews
-			articleLikes
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+    createBoardArticle(input: $input) {
+        _id
+        articleCategory
+        articleStatus
+        articleTitle
+        articleContent
+        articleImage
+        articleViews
+        articleLikes
+        articleComments
+        memberId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 export const UPDATE_BOARD_ARTICLE = gql`
 	mutation UpdateBoardArticle($input: BoardArticleUpdate!) {
-		updateBoardArticle(input: $input) {
-			_id
-			articleCategory
-			articleStatus
-			articleTitle
-			articleContent
-			articleImage
-			articleViews
-			articleLikes
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+    updateBoardArticle(input: $input) {
+        _id
+        articleCategory
+        articleStatus
+        articleTitle
+        articleContent
+        articleImage
+        articleViews
+        articleLikes
+        articleComments
+        memberId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 export const LIKE_TARGET_BOARD_ARTICLE = gql`
 	mutation LikeTargetBoardArticle($input: String!) {
-		likeTargetBoardArticle(articleId: $input) {
-			_id
-			articleCategory
-			articleStatus
-			articleTitle
-			articleContent
-			articleImage
-			articleViews
-			articleLikes
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+    likeTargetBoardArticle(articleId: $input) {
+        _id
+        articleCategory
+        articleStatus
+        articleTitle
+        articleContent
+        articleImage
+        articleViews
+        articleLikes
+        articleComments
+        memberId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 /**************************
@@ -273,32 +312,34 @@ export const LIKE_TARGET_BOARD_ARTICLE = gql`
 
 export const CREATE_COMMENT = gql`
 	mutation CreateComment($input: CommentInput!) {
-		createComment(input: $input) {
-			_id
-			commentStatus
-			commentGroup
-			commentContent
-			commentRefId
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+    createComment(input: $input) {
+        _id
+        commentStatus
+        commentGroup
+        commentContent
+        commentRefId
+        memberId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 export const UPDATE_COMMENT = gql`
 	mutation UpdateComment($input: CommentUpdate!) {
-		updateComment(input: $input) {
-			_id
-			commentStatus
-			commentGroup
-			commentContent
-			commentRefId
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+    updateComment(input: $input) {
+        _id
+        commentStatus
+        commentGroup
+        commentContent
+        commentRefId
+        memberId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 /**************************
@@ -307,24 +348,26 @@ export const UPDATE_COMMENT = gql`
 
 export const SUBSCRIBE = gql`
 	mutation Subscribe($input: String!) {
-		subscribe(input: $input) {
-			_id
-			followingId
-			followerId
-			createdAt
-			updatedAt
-		}
-	}
+    subscribe(input: $input) {
+        _id
+        followingId
+        followerId
+        createdAt
+        updatedAt
+    }
+}
+
 `;
 
 export const UNSUBSCRIBE = gql`
 	mutation Unsubscribe($input: String!) {
-		unsubscribe(input: $input) {
-			_id
-			followingId
-			followerId
-			createdAt
-			updatedAt
-		}
-	}
+    unsubscribe(input: $input) {
+        _id
+        followingId
+        followerId
+        createdAt
+        updatedAt
+    }
+}
+
 `;

@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Top from '../Top';
 import Footer from '../Footer';
 import { Stack } from '@mui/material';
-import FiberContainer from '../common/FiberContainer';
+//import FiberContainer from '../common/FiberContainer';
 import HeaderFilter from '../homepage/HeaderFilter';
 import { userVar } from '../../../apollo/store';
 import { useReactiveVar } from '@apollo/client';
@@ -31,8 +31,8 @@ const withLayoutMain = (Component: any) => {
 			return (
 				<>
 					<Head>
-						<title>Nestar</title>
-						<meta name={'title'} content={`Nestar`} />
+						<title>Hankang</title>
+						<meta name={'title'} content={`Hankang`} />
 					</Head>
 					<Stack id="mobile-wrap">
 						<Stack id={'top'}>
@@ -53,8 +53,8 @@ const withLayoutMain = (Component: any) => {
 			return (
 				<>
 					<Head>
-						<title>Nestar</title>
-						<meta name={'title'} content={`Nestar`} />
+						<title>Hankang</title>
+						<meta name={'title'} content={`Hankang`} />
 					</Head>
 					<Stack id="pc-wrap">
 						<Stack id={'top'}>
@@ -62,9 +62,14 @@ const withLayoutMain = (Component: any) => {
 						</Stack>
 
 						<Stack className={'header-main'}>
-							<FiberContainer />
+							
+							{/* <FiberContainer /> */}
 							<Stack className={'container'}>
-								<HeaderFilter />
+							<h2 data-text="BigSale">BigSale</h2>
+							<h3>Up to 70% off</h3>
+							<h1>ALL EXCLUSIVE SELECTION THIS <br></br>SEASON'S TRENDS,
+							EXCLUSIVELY ONLINE</h1>
+								{/* <HeaderFilter /> */}
 							</Stack>
 						</Stack>
 

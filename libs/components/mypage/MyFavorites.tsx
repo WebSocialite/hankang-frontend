@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { Pagination, Stack, Typography } from '@mui/material';
-import PropertyCard from '../property/PropertyCard';
-import { Property } from '../../types/property/property';
+import ProductCard from '../product/ProductCard';
+import { Property } from '../../types/product/product';
 import { T } from '../../types/common';
 
 const MyFavorites: NextPage = () => {
@@ -33,7 +33,7 @@ const MyFavorites: NextPage = () => {
 				<Stack className="favorites-list-box">
 					{myFavorites?.length ? (
 						myFavorites?.map((property: Property) => {
-							return <PropertyCard property={property} myFavorites={true} />;
+							return <ProductCard product={property} myFavorites={true} />;
 						})
 					) : (
 						<div className={'no-data'}>

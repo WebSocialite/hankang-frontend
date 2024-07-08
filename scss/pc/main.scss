@@ -4,11 +4,11 @@
 
 @import '/scss/pc/homepage/homepage';
 
-@import '/scss/pc/property/property';
-@import '/scss/pc/property/detail.scss';
+@import '/scss/pc/product/product.scss';
+@import '/scss/pc/product/detail.scss';
 
-@import '/scss/pc/agent/agent';
-@import '/scss/pc/agent/detail.scss';
+@import '/scss/pc/seller/seller.scss';
+@import '/scss/pc/seller/detail.scss';
 @import '/scss/pc/mypage/mypage.scss';
 @import '/scss/pc/mypage/addNewProperty.scss';
 @import '/scss/pc/mypage/myProperties.scss';
@@ -56,7 +56,7 @@ body::-webkit-scrollbar {
 				box-sizing: border-box;
 				z-index: 99;
 				align-items: center;
-				border-top: 1px solid rgba(255, 255, 255, 0.07);
+				border-top: 1px solid rgba(255, 252, 252, 0.277);
 				&.transparent {
 					background-color: #181a209e;
 				}
@@ -66,6 +66,8 @@ body::-webkit-scrollbar {
 					justify-content: space-between;
 					.logo-box {
 						img {
+							margin-top: 0px;
+							height: 82px;
 							width: 150px;
 							cursor: pointer;
 						}
@@ -80,11 +82,25 @@ body::-webkit-scrollbar {
 							position: relative;
 							color: #eeeeeeed;
 							font-family: $font;
-							font-size: 15px;
+							font-size: 18px;
 							font-style: normal;
 							font-weight: 600;
 							line-height: normal;
 							cursor: pointer;
+							&::after{
+								content: "";
+								position: absolute;
+								width: 0%;
+								height: 2px;
+								bottom: -3px;
+								background-color: #fff;
+								left: 0;
+								transition: all .42s;
+							}
+							&:hover::after{
+								width: 100%;
+							}
+							
 							.community_menu {
 								position: absolute;
 								left: -177%;
@@ -128,7 +144,7 @@ body::-webkit-scrollbar {
 							}
 							span {
 								font-family: $font;
-								font-size: 14px;
+								font-size: 15px;
 								font-style: normal;
 								font-weight: 600;
 								line-height: normal;
@@ -175,13 +191,61 @@ body::-webkit-scrollbar {
 		position: relative;
 		width: 100%;
 		height: 860px;
-		background-image: url('/img/banner/header1.svg');
+		background-image: url('/img/banner/blackbanner.jpg');
 		background-size: cover;
 		.container {
 			position: relative;
 			margin-top: 20px;
+			padding: 300px 10px ; 
 			flex-direction: column;
-			align-items: center;
+			margin-left: 45%;
+			h2{
+				position: relative;
+				color: transparent;
+				font-size: 6vw;
+				-webkit-text-stroke: 0.1vw #fff;
+				margin: 14px;
+				
+			}
+			h3{
+				position: relative;
+				color: #fff;
+				font-size: 6vw;
+				-webkit-text-stroke: 0.1vw #383d52;
+			}
+			
+			h2::before
+			{
+				content: attr(data-text);
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 0;
+				height: 100%;
+				color: yellow;
+				-webkit-text-stroke: 0vw #383d52;
+				overflow: hidden;
+				animation: animate 6s linear infinite;
+			}
+			@keyframes animate 
+			{
+				0%,10%, 100%
+				{
+					width: 0;
+				}
+				70%,90%
+				{
+					width: 100%;
+				}
+
+			}
+			h1{
+				font-size: 36px;
+				color: transparent;
+				font-weight: 700;
+				margin-top: 10px;
+				-webkit-text-stroke: 0.4px #fff;
+			}
 			.search-box {
 				position: relative;
 				margin-top: 56px;
