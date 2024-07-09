@@ -56,11 +56,10 @@ function createIsomorphicLink() {
 				},
 			},
 		});
-
 		const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 			if (graphQLErrors) {
 				graphQLErrors.map(({ message, locations, path, extensions }) =>
-					console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
+					console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}, `),
 				);
 			}
 			if (networkError) console.log(`[Network error]: ${networkError}`);
@@ -68,6 +67,18 @@ function createIsomorphicLink() {
 			if (networkError?.statusCode === 401) {
 			}
 		});
+
+		// const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+		// 	if (graphQLErrors) {
+		// 		graphQLErrors.map(({ message, extensions }) =>
+		// 			console.log(`[GraphQL error]: Message: ${message}`),
+		// 		);
+		// 	}
+		// 	if (networkError) console.log(`[Network error]: ${networkError}`);
+		// 	// @ts-ignore
+		// 	if (networkError?.statusCode === 401) {
+		// 	}
+		// });
 
 		const splitLink = split(
 			({ query }) => {

@@ -14,7 +14,6 @@ export interface ProductInput {
 interface PISearch {
 	memberId?: string;
 	typeList?: ProductType[];
-	roomsList?: Number[];
 	options?: string[];
 	pricesRange?: Range;
 	periodsRange?: PeriodsRange;

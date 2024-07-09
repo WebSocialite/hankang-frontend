@@ -90,7 +90,7 @@ const MemberMenu = (props: MemberMenuProps) => {
 												Products
 											</Typography>
 											<Typography className="count-title" variant="subtitle1">
-												{member?.memberProducts}
+												{member?.}
 											</Typography>
 										</div>
 									</Link>

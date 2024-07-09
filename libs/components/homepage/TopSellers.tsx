@@ -8,6 +8,10 @@ import { Autoplay, Navigation, Pagination } from 'swiper';
 import TopSellerCard from './TopSellerCard';
 import { Member } from '../../types/member/member';
 import { SellersInquiry as SellersInquiry } from '../../types/member/member.input';
+import { GET_SELLERS } from '../../../apollo/user/query';
+import { useQuery } from '@apollo/client';
+import { T } from '../../types/common';
+
 
 interface TopSellersProps {
 	initialInput: SellersInquiry;
@@ -20,6 +24,21 @@ const TopSellers = (props: TopSellersProps) => {
 	const [topSellers, setTopSellers] = useState<Member[]>([]);
 
 	/** APOLLO REQUESTS **/
+
+	const {
+		loading: getSellersLoading, // bu processda aniq animationlardi korsatar ekan
+		data: getSellersData, // data kirib kelgunga qadar error bulsa pasdagi erroni beradi
+		error: getSellersError,
+		refetch: getSellersRefetch,
+	} = useQuery(GET_SELLERS, {
+		fetchPolicy: "cache-and-network", // birinchi cache oqib keyin networkga o'tiladi
+		variables: {input: initialInput},
+		notifyOnNetworkStatusChange:true,
+		onCompleted: (data: T) => { 
+			console.log("=======", data);
+			setTopSellers(data?.getSellers?.list);
+		},
+	});
 	/** HANDLERS **/
 
 	if (device === 'mobile') {
