@@ -218,7 +218,7 @@ export const UPDATE_PRODUCT = gql`
 
 export const LIKE_TARGET_PRODUCT = gql`
 	mutation LikeTargetProduct($input: String!) {
-    likeTargetProduct(memberId: $input) {
+    likeTargetProduct(productId: $input) {
         _id
         productType
         productStatus

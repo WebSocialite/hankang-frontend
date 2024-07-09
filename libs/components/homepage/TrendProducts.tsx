@@ -11,6 +11,9 @@ import { ProductsInquiry } from '../../types/product/product.input';
 import TrendProductCard from './TrendProductCard';
 import { GET_PRODUCTS } from '../../../apollo/user/query';
 import { T } from '../../types/common';
+import { LIKE_TARGET_PRODUCT } from '../../../apollo/user/mutation';
+import { Message } from '../../enums/common.enum';
+import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
 
 interface TrendProductsProps {
 	initialInput: ProductsInquiry;
@@ -22,7 +25,7 @@ const TrendProducts = (props: TrendProductsProps) => {
 	const [trendProducts, setTrendProducts] = useState<Product[]>([]);
 
 	/** APOLLO REQUESTS **/
-
+	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
 	const {
 		loading: getProductsLoading, // bu processda aniq animationlardi korsatar ekan
@@ -38,6 +41,23 @@ const TrendProducts = (props: TrendProductsProps) => {
 		},
 	});
 	/** HANDLERS **/
+
+	const likeProductHandler = async (user: T, id: string ) => {
+		try {
+			if(!id) return;
+			if(!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			await likeTargetProduct({
+				variables: {input: id} // postman da variables joyidagi input ga ID ni kiritishini sorayapmiz
+			});
+			await getProductsRefetch({ input: initialInput });
+
+			await sweetTopSmallSuccessAlert("success", 800); // 800 = mili seconds
+		} catch (err: any) {
+			console.log('ERROR likePropertyHandler', err.message );
+			sweetMixinErrorAlert(err.message).then();
+		}
+	};
+
 
 	if (trendProducts) console.log('trendProducts:', trendProducts);
 	if (!trendProducts) return null;
@@ -65,7 +85,7 @@ const TrendProducts = (props: TrendProductsProps) => {
 								{trendProducts.map((product: Product) => {
 									return (
 										<SwiperSlide key={product._id} className={'trend-property-slide'}>
-											<TrendProductCard product={product} />
+											{/* <TrendProductCard product={product} likeProductHandler={likeProductHandler} /> */}
 										</SwiperSlide>
 									);
 								})}
@@ -114,7 +134,7 @@ const TrendProducts = (props: TrendProductsProps) => {
 								{trendProducts.map((product: Product) => {
 									return (
 										<SwiperSlide key={product._id} className={'trend-property-slide'}>
-											<TrendProductCard product={product} />
+											<TrendProductCard product={product} likeProductHandler={likeProductHandler}/>
 										</SwiperSlide>
 									);
 								})}

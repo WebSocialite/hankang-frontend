@@ -156,6 +156,7 @@ export const updateUserInfo = (jwtToken: any) => {
 export const logOut = () => {
 	deleteStorage();
 	deleteUserInfo();
+	window.location.reload(); // if logOut the liked products will reload
 };
 
 const deleteStorage = () => {

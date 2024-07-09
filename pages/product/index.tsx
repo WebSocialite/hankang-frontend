@@ -11,6 +11,10 @@ import { Product } from '../../libs/types/product/product';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import { Direction } from '../../libs/enums/common.enum';
+import { LIKE_TARGET_PRODUCT } from '../../apollo/user/mutation';
+import { GET_PRODUCTS } from '../../apollo/user/query';
+import { T } from '../../libs/types/common';
+import { useMutation, useQuery } from '@apollo/client';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: {
@@ -32,6 +36,23 @@ const ProductList: NextPage = ({ initialInput, ...props }: any) => {
 	const [filterSortName, setFilterSortName] = useState('New');
 
 	/** APOLLO REQUESTS **/
+
+	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+
+	const {
+		loading: getProductLoading, ///products*
+		data: getProductsData,
+		error: getProductsError,
+		refetch : getProductsRefetch,
+	} = useQuery(GET_PRODUCTS, {
+		fetchPolicy: 'network-only',
+		variables: { input: searchFilter },
+		notifyOnNetworkStatusChange : true,
+		onCompleted: (data: T) => {
+			setProducts(data?.getProducts?.list);
+			setTotal(data?.getProducts?.metaCounter[0]?.total);
+		},
+	});
 
 	/** LIFECYCLES **/
 	useEffect(() => {
@@ -180,10 +201,7 @@ ProductList.defaultProps = {
 		sort: 'createdAt',
 		direction: 'DESC',
 		search: {
-			squaresRange: {
-				start: 0,
-				end: 500,
-			},
+			
 			pricesRange: {
 				start: 0,
 				end: 2000000,

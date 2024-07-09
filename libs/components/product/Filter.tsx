@@ -243,50 +243,50 @@ const Filter = (props: FilterType) => {
 	// 	[searchFilter],
 	// );
 
-	const productOptionSelectHandler = useCallback(
-		async (e: any) => {
-			try {
-				const isChecked = e.target.checked;
-				const value = e.target.value;
-				if (isChecked) {
-					await router.push(
-						`/product?input=${JSON.stringify({
-							...searchFilter,
-							search: { ...searchFilter.search, options: [...(searchFilter?.search?.options || []), value] },
-						})}`,
-						`/product?input=${JSON.stringify({
-							...searchFilter,
-							search: { ...searchFilter.search, options: [...(searchFilter?.search?.options || []), value] },
-						})}`,
-						{ scroll: false },
-					);
-				} else if (searchFilter?.search?.options?.includes(value)) {
-					await router.push(
-						`/product?input=${JSON.stringify({
-							...searchFilter,
-							search: {
-								...searchFilter.search,
-								options: searchFilter?.search?.options?.filter((item: string) => item !== value),
-							},
-						})}`,
-						`/product?input=${JSON.stringify({
-							...searchFilter,
-							search: {
-								...searchFilter.search,
-								options: searchFilter?.search?.options?.filter((item: string) => item !== value),
-							},
-						})}`,
-						{ scroll: false },
-					);
-				}
+	// const productOptionSelectHandler = useCallback(
+	// 	async (e: any) => {
+	// 		try {
+	// 			const isChecked = e.target.checked;
+	// 			const value = e.target.value;
+	// 			if (isChecked) {
+	// 				await router.push(
+	// 					`/product?input=${JSON.stringify({
+	// 						...searchFilter,
+	// 						search: { ...searchFilter.search, options: [...(searchFilter?.search?.options || []), value] },
+	// 					})}`,
+	// 					`/product?input=${JSON.stringify({
+	// 						...searchFilter,
+	// 						search: { ...searchFilter.search, options: [...(searchFilter?.search?.options || []), value] },
+	// 					})}`,
+	// 					{ scroll: false },
+	// 				);
+	// 			} else if (searchFilter?.search?.options?.includes(value)) {
+	// 				await router.push(
+	// 					`/product?input=${JSON.stringify({
+	// 						...searchFilter,
+	// 						search: {
+	// 							...searchFilter.search,
+	// 							options: searchFilter?.search?.options?.filter((item: string) => item !== value),
+	// 						},
+	// 					})}`,
+	// 					`/product?input=${JSON.stringify({
+	// 						...searchFilter,
+	// 						search: {
+	// 							...searchFilter.search,
+	// 							options: searchFilter?.search?.options?.filter((item: string) => item !== value),
+	// 						},
+	// 					})}`,
+	// 					{ scroll: false },
+	// 				);
+	// 			}
 
-				console.log('productOptionSelectHandler:', e.target.value);
-			} catch (err: any) {
-				console.log('ERROR, productOptionSelectHandler:', err);
-			}
-		},
-		[searchFilter],
-	);
+	// 			console.log('productOptionSelectHandler:', e.target.value);
+	// 		} catch (err: any) {
+	// 			console.log('ERROR, productOptionSelectHandler:', err);
+	// 		}
+	// 	},
+	// 	[searchFilter],
+	// );
 
 	// const propertyBedSelectHandler = useCallback(
 	// 	async (number: Number) => {

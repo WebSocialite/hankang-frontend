@@ -12,10 +12,11 @@ import { userVar } from '../../../apollo/store';
 
 interface TrendProductCardProps {
 	product: Product;
+	likeProductHandler: any;
 }
 
 const TrendProductCard = (props: TrendProductCardProps) => {
-	const { product: product } = props;
+	const { product, likeProductHandler } = props;
 	const device = useDeviceDetect();
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
@@ -43,7 +44,7 @@ const TrendProductCard = (props: TrendProductCardProps) => {
 								<RemoveRedEyeIcon />
 							</IconButton>
 							<Typography className="view-cnt">{product?.productViews}</Typography>
-							<IconButton color={'default'}>
+							<IconButton color={'default'} onClick={() => likeProductHandler(user, product?._id)}>
 								{product?.meLiked && product?.meLiked[0]?.myFavorite ? (
 									<FavoriteIcon style={{ color: 'red' }} />
 								) : (
@@ -78,7 +79,7 @@ const TrendProductCard = (props: TrendProductCardProps) => {
 								<RemoveRedEyeIcon />
 							</IconButton>
 							<Typography className="view-cnt">{product?.productViews}</Typography>
-							<IconButton color={'default'}>
+							<IconButton color={'default'} onClick={() => likeProductHandler(user, product?._id)}>
 								{product?.meLiked && product?.meLiked[0]?.myFavorite ? (
 									<FavoriteIcon style={{ color: 'red' }} />
 								) : (
