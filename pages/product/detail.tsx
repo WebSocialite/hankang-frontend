@@ -29,8 +29,9 @@ import 'swiper/css/pagination';
 import ProductBigCard from '../../libs/components/common/ProductBigCard';
 import { CREATE_COMMENT, LIKE_TARGET_PRODUCT } from '../../apollo/user/mutation';
 import { GET_COMMENTS, GET_PRODUCT, GET_PRODUCTS } from '../../apollo/user/query';
-import { Direction } from '../../libs/enums/common.enum';
+import { Direction, Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
+import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -145,9 +146,37 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 		setSlideImage(image);
 	};
 
+
 	const commentPaginationChangeHandler = async (event: ChangeEvent<unknown>, value: number) => {
 		commentInquiry.page = value;
 		setCommentInquiry({ ...commentInquiry });
+	};
+
+	const likeProductHandler = async (user: T, id: string ) => {
+		try {
+			if(!id) return;
+			if(!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			// execute likeTargetHandler
+			await likeTargetProduct({
+				variables: {input: id}
+			});
+
+			await getProductRefetch({input: productId})
+			await getProductsRefetch({ input: {page: 1,
+				limit: 4,
+				sort: "createdAt",
+				direction: Direction.DESC,
+				search: {
+					//locationList: [product?.productLocation],
+				},
+			},
+		 });
+
+			await sweetTopSmallSuccessAlert("success", 800);
+		} catch (err: any) {
+			console.log('ERROR likePropertyHandler', err.message );
+			sweetMixinErrorAlert(err.message).then();
+		}
 	};
 
 	if (device === 'mobile') {
@@ -583,7 +612,9 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 										{destinationProducts.map((product: Product) => {
 											return (
 												<SwiperSlide className={'similar-homes-slide'} key={product.productTitle}>
-													<ProductBigCard product={product} key={product?._id} />
+													<ProductBigCard product={product} 
+													likeProductHandler={likeProductHandler} 
+													key={product?._id} />
 												</SwiperSlide>
 											);
 										})}
