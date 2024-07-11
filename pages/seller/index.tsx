@@ -39,6 +39,8 @@ const SellerList: NextPage = ({ initialInput, ...props }: any) => {
 
 	/** APOLLO REQUESTS **/
 
+	
+
 	const [likeTargetMember] = useMutation(LIKE_TARGET_MEMBER); 
 	
 	const {

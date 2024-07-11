@@ -13,7 +13,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 interface ProductBigCardProps {
 	product: Product;
-	likeProductHandler: any;
+	likeProductHandler?: any;
 }
 
 const ProductBigCard = (props: ProductBigCardProps) => {
