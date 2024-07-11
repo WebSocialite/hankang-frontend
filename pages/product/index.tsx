@@ -10,11 +10,12 @@ import { ProductsInquiry } from '../../libs/types/product/product.input';
 import { Product } from '../../libs/types/product/product';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import { Direction } from '../../libs/enums/common.enum';
+import { Direction, Message } from '../../libs/enums/common.enum';
 import { LIKE_TARGET_PRODUCT } from '../../apollo/user/mutation';
 import { GET_PRODUCTS } from '../../apollo/user/query';
 import { T } from '../../libs/types/common';
 import { useMutation, useQuery } from '@apollo/client';
+import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: {
@@ -78,6 +79,25 @@ const ProductList: NextPage = ({ initialInput, ...props }: any) => {
 		);
 		setCurrentPage(value);
 	};
+
+	const likeProductHandler = async (user: T, id: string ) => {
+		try {
+			if(!id) return;
+			if(!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			// execute likeTargetHandler
+			await likeTargetProduct({
+				variables: {input: id}
+			});
+			// execute getProductRefetch
+			await getProductsRefetch({ input: initialInput });
+
+			await sweetTopSmallSuccessAlert("success", 800);
+		} catch (err: any) {
+			console.log('ERROR likeProductHandler', err.message );
+			sweetMixinErrorAlert(err.message).then();
+		}
+	};
+
 
 	const sortingClickHandler = (e: MouseEvent<HTMLElement>) => {
 		setAnchorEl(e.currentTarget);
@@ -161,7 +181,7 @@ const ProductList: NextPage = ({ initialInput, ...props }: any) => {
 									</div>
 								) : (
 									products.map((product: Product) => {
-										return <ProductCard product={product} key={product?._id} />;
+										return <ProductCard product={product} likeProductHandler={likeProductHandler} key={product?._id} />;
 									})
 								)}
 							</Stack>

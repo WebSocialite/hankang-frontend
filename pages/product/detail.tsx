@@ -10,7 +10,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
-import { useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { Product } from '../../libs/types/product/product';
 import moment from 'moment';
@@ -27,6 +27,10 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import ProductBigCard from '../../libs/components/common/ProductBigCard';
+import { CREATE_COMMENT, LIKE_TARGET_PRODUCT } from '../../apollo/user/mutation';
+import { GET_COMMENTS, GET_PRODUCT, GET_PRODUCTS } from '../../apollo/user/query';
+import { Direction } from '../../libs/enums/common.enum';
+import { T } from '../../libs/types/common';
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -43,7 +47,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 	const [productId, setProductId] = useState<string | null>(null);
 	const [product, setProduct] = useState<Product | null>(null);
 	const [slideImage, setSlideImage] = useState<string>('');
-	const [destinationProduct, setDestinationProduct] = useState<Product[]>([]);
+	const [destinationProducts, setDestinationProducts] = useState<Product[]>([]);
 	const [commentInquiry, setCommentInquiry] = useState<CommentsInquiry>(initialComment);
 	const [productComments, setProductComments] = useState<Comment[]>([]);
 	const [commentTotal, setCommentTotal] = useState<number>(0);
@@ -54,6 +58,68 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 	});
 
 	/** APOLLO REQUESTS **/
+
+	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+	const [createComment] = useMutation(CREATE_COMMENT);
+
+	const {
+		loading: getProductLoading, // bu processda aniq animationlardi korsatar ekan
+		data: getProductData, // data kirib kelgunga qadar error bulsa pasdagi erroni beradi
+		error: getProductError,
+		refetch: getProductRefetch,
+	} = useQuery(GET_PRODUCT, {
+		fetchPolicy: "cache-and-network", // birinchi cache oqib keyin networkga o'tiladi
+		variables: {input: productId},
+		skip: !productId,
+		notifyOnNetworkStatusChange:true,
+		onCompleted: (data: T) => { 
+			if(data?.getProduct) setProduct(data?.getProduct);
+			if(data?.getProduct) setSlideImage(data?.getProduct?.productImages[0]);
+		},
+	});
+
+	const {
+		loading: getProductsLoading,
+		data: getProductsData, 
+		error: getProductsError,
+		refetch: getProductsRefetch,
+	} = useQuery(GET_PRODUCTS, {
+		fetchPolicy: "cache-and-network", 
+		variables: {
+			input: {
+				page: 1,
+				limit: 4,
+				sort: "createdAt",
+				direction: Direction.DESC,
+				search: {
+					//locationList: product?.productLocation ? [product?.productLocation] : [],
+				},
+			},
+		},
+		skip: !productId && !product,
+		notifyOnNetworkStatusChange:true,
+		onCompleted: (data: T) => { 
+			if(data?.getProducts?.list) setDestinationProducts(data?.getProducts?.list);
+		},
+	});
+
+	const {
+		loading: getCommentsLoading,
+		data: getCommentsData, 
+		error: getCommentsError,
+		refetch: getCommentsRefetch,
+	} = useQuery(GET_COMMENTS, {
+		fetchPolicy: "cache-and-network", 
+		variables: { input: initialComment },
+		skip: !commentInquiry.search.commentRefId,
+		notifyOnNetworkStatusChange: true,
+		onCompleted: (data: T) => { 
+			if(data?.getComments?.list) setProductComments(data?.getComments?.list);
+			setCommentTotal(data?.getComments?.metaCounter[0]?.total ?? 0);
+		},
+	});
+
+
 
 	/** LIFECYCLES **/
 	useEffect(() => {
@@ -487,7 +553,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 								</Stack>
 							</Stack>
 						</Stack>
-						{destinationProduct.length !== 0 && (
+						{destinationProducts.length !== 0 && (
 							<Stack className={'similar-properties-config'}>
 								<Stack className={'title-pagination-box'}>
 									<Stack className={'title-box'}>
@@ -514,7 +580,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 											el: '.swiper-similar-pagination',
 										}}
 									>
-										{destinationProduct.map((product: Product) => {
+										{destinationProducts.map((product: Product) => {
 											return (
 												<SwiperSlide className={'similar-homes-slide'} key={product.productTitle}>
 													<ProductBigCard product={product} key={product?._id} />
