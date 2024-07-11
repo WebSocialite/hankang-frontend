@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Box, Button, Checkbox, Stack, Typography } from '@mui/material';
+import { Box, Button, Checkbox, CircularProgress, Stack, Typography } from '@mui/material';
 import useDeviceDetect from '../../libs/hooks/useDeviceDetect';
 import withLayoutFull from '../../libs/components/layout/LayoutFull';
 import { NextPage } from 'next';
@@ -31,7 +31,7 @@ import { CREATE_COMMENT, LIKE_TARGET_PRODUCT } from '../../apollo/user/mutation'
 import { GET_COMMENTS, GET_PRODUCT, GET_PRODUCTS } from '../../apollo/user/query';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetErrorHandling, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -69,7 +69,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 		error: getProductError,
 		refetch: getProductRefetch,
 	} = useQuery(GET_PRODUCT, {
-		fetchPolicy: "cache-and-network", // birinchi cache oqib keyin networkga o'tiladi
+		fetchPolicy: "network-only", // birinchi cache oqib keyin networkga o'tiladi
 		variables: {input: productId},
 		skip: !productId,
 		notifyOnNetworkStatusChange:true,
@@ -93,7 +93,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 				sort: "createdAt",
 				direction: Direction.DESC,
 				search: {
-					//locationList: product?.productLocation ? [product?.productLocation] : [],
+					price: product?.productPrice ? [product?.productPrice] : [],
 				},
 			},
 		},
@@ -139,7 +139,10 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 		}
 	}, [router]);
 
-	useEffect(() => {}, [commentInquiry]);
+	useEffect(() => {
+		if(commentInquiry.search.commentRefId)
+		getCommentsRefetch({input: commentInquiry})
+	}, [commentInquiry]);
 
 	/** HANDLERS **/
 	const changeImageHandler = (image: string) => {
@@ -167,7 +170,7 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 				sort: "createdAt",
 				direction: Direction.DESC,
 				search: {
-					//locationList: [product?.productLocation],
+					prict: [product?.productPrice],
 				},
 			},
 		 });
@@ -178,6 +181,28 @@ const ProductDetail: NextPage = ({ initialComment, ...props }: any) => {
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};
+	const createCommentHandler = async () => {
+		try {
+			if(!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			await createComment({variables: {input: insertCommentData}});
+
+			setInsertCommentData({...insertCommentData, commentContent: ''});
+
+			await getCommentsRefetch({input: commentInquiry});
+		} catch (err: any) {
+			await sweetErrorHandling(err);
+		}
+	};
+
+	if(getProductLoading) {
+		return (
+			<Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '1000px'}}>
+<CircularProgress size={'4rem'} /> 
+			</Stack>
+		);
+	}
+
+	
 
 	if (device === 'mobile') {
 		return <div>PRODUCT DETAIL PAGE</div>;

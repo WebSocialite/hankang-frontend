@@ -18,6 +18,7 @@ import { Comment } from '../../libs/types/comment/comment';
 import { CommentGroup } from '../../libs/enums/comment.enum';
 import { REACT_APP_API_URL } from '../../libs/config';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import ProductBigCard from '../../libs/components/common/ProductBigCard';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: {
@@ -62,7 +63,7 @@ const SellerDetail: NextPage = ({ initialInput, initialComment, ...props }: any)
 		}
 	};
 
-	const propertyPaginationChangeHandler = async (event: ChangeEvent<unknown>, value: number) => {
+	const productPaginationChangeHandler = async (event: ChangeEvent<unknown>, value: number) => {
 		searchFilter.page = value;
 		setSearchFilter({ ...searchFilter });
 	};
@@ -103,7 +104,10 @@ const SellerDetail: NextPage = ({ initialInput, initialComment, ...props }: any)
 							{sellerProducts.map((product: Product) => {
 								return (
 									<div className={'wrap-main'} key={product?._id}>
-										<PropertyBigCard product={product} key={product?._id} />
+										<ProductBigCard 
+										product={product} 
+										likeProductHandler={undefined}
+										key={product?._id} />
 									</div>
 								);
 							})}
@@ -115,7 +119,7 @@ const SellerDetail: NextPage = ({ initialInput, initialComment, ...props }: any)
 										<Pagination
 											page={searchFilter.page}
 											count={Math.ceil(productTotal / searchFilter.limit) || 1}
-											onChange={propertyPaginationChangeHandler}
+											onChange={productPaginationChangeHandler}
 											shape="circular"
 											color="primary"
 										/>

@@ -17,6 +17,8 @@ const TopSellerCard = (props: TopSellerProps) => {
 
 	/** HANDLERS **/
 
+	
+
 	if (device === 'mobile') {
 		return (
 			<Stack className="top-agent-card">

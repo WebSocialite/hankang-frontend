@@ -21,6 +21,12 @@ const PopularProductCard = (props: PopularProductCardProps) => {
 
 	/** HANDLERS **/
 
+	const pushDetailHandler = async (productId: string) => {
+		console.log("ID:", productId);
+		await router.push({pathname: "/product/detail", query: {id: productId}})
+	};
+
+
 	if (device === 'mobile') {
 		return (
 			<Stack className="popular-card-box">
@@ -28,6 +34,7 @@ const PopularProductCard = (props: PopularProductCardProps) => {
 					component={'div'}
 					className={'card-img'}
 					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${product?.productImages[0]})` }}
+					onClick={() => pushDetailHandler(product._id)}
 				>
 					{product && product?.productRank >= topProductRank ? (
 						<div className={'status'}>
@@ -41,7 +48,9 @@ const PopularProductCard = (props: PopularProductCardProps) => {
 					<div className={'price'}>${product.productPrice}</div>
 				</Box>
 				<Box component={'div'} className={'info'}>
-					<strong className={'title'}>{product.productTitle}</strong>
+					<strong className={'title'}
+					onClick={() => pushDetailHandler(product._id)}
+					>{product.productTitle}</strong>
 					<p className={'desc'}>{product.productAddress}</p>
 					{/* <div className={'options'}>
 						<div>
@@ -77,6 +86,7 @@ const PopularProductCard = (props: PopularProductCardProps) => {
 					component={'div'}
 					className={'card-img'}
 					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${product?.productImages[0]})` }}
+					onClick={() => pushDetailHandler(product._id)}
 				>
 					{product && product?.productRank >= topProductRank ? (
 						<div className={'status'}>
@@ -90,7 +100,9 @@ const PopularProductCard = (props: PopularProductCardProps) => {
 					<div className={'price'}>${product.productPrice}</div>
 				</Box>
 				<Box component={'div'} className={'info'}>
-					<strong className={'title'}>{product.productTitle}</strong>
+					<strong className={'title'}
+					onClick={() => pushDetailHandler(product._id)}
+					>{product.productTitle}</strong>
 					<p className={'desc'}>{product.productAddress}</p>
 					{/* <div className={'options'}>
 						<div>

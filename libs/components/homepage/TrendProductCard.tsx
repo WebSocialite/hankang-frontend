@@ -22,19 +22,28 @@ const TrendProductCard = (props: TrendProductCardProps) => {
 	const user = useReactiveVar(userVar);
 
 	/** HANDLERS **/
+	const pushDetailHandler = async (productId: string) => {
+		console.log("ID:", productId);
+		await router.push({pathname: "/product/detail", query: {id: productId}})
+	};
+
 
 	if (device === 'mobile') {
+	
 		return (
 			<Stack className="trend-card-box" key={product._id}>
 				<Box
 					component={'div'}
 					className={'card-img'}
 					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${product?.productImages[0]})` }}
+					onClick={() => pushDetailHandler(product._id)}
 				>
 					<div>${product.productPrice}</div>
 				</Box>
 				<Box component={'div'} className={'info'}>
-					<strong className={'title'}>{product.productTitle}</strong>
+					<strong className={'title'}
+					onClick={() => pushDetailHandler(product._id)}
+					>{product.productTitle}</strong>
 					<p className={'desc'}>{product.productDesc ?? 'no description'}</p>
 					
 					<Divider sx={{ mt: '15px', mb: '17px' }} />
@@ -64,11 +73,16 @@ const TrendProductCard = (props: TrendProductCardProps) => {
 					component={'div'}
 					className={'card-img'}
 					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${product?.productImages[0]})` }}
+					onClick={() => pushDetailHandler(product._id)}
 				>
 					<div>${product.productPrice}</div>
 				</Box>
 				<Box component={'div'} className={'info'}>
-					<strong className={'title'}>{product.productTitle}</strong>
+					<strong className={'title'}
+					onClick={() => pushDetailHandler(product._id)}
+					>{product.productTitle}
+						
+					</strong>
 					<p className={'desc'}>{product.productDesc ?? 'no description'}</p>
 					
 					<Divider sx={{ mt: '15px', mb: '17px' }} />

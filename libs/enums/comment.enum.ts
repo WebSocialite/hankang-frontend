@@ -8,4 +8,5 @@ export enum CommentGroup {
 	ARTICLE = 'ARTICLE',
 	PRODUCT = 'PRODUCT',
 	COMMENT = 'COMMENT',
+	FOOD = 'FOOD',
 }

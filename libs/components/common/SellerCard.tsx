@@ -12,6 +12,7 @@ import { userVar } from '../../../apollo/store';
 
 interface SellerCardProps {
 	seller: any;
+	likeMemberHandler: any
 }
 
 const SellerCard = (props: SellerCardProps) => {
