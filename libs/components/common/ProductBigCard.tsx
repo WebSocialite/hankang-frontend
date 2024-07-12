@@ -28,7 +28,7 @@ const ProductBigCard = (props: ProductBigCardProps) => {
 	};
 
 	if (device === 'mobile') {
-		return <div>APARTMEND BIG CARD</div>;
+		return <div>APARTMENT BIG CARD</div>;
 	} else {
 		return (
 			<Stack className="property-big-card-box" onClick={() => goProductDetatilPage(product?._id)}>

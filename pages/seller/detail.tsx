@@ -125,9 +125,17 @@ const SellerDetail: NextPage = ({ initialInput, initialComment, ...props }: any)
 	useEffect(() => {
 		if (router.query.sellerId) setSellerId(router.query.sellerId as string);
 	}, [router]);
+	useEffect(() => {
+		if (searchFilter.search.memberId) {
+			getProductsRefetch({ variables: { input: searchFilter}}).then();
+		}
+	}, [searchFilter]);
 
-	useEffect(() => {}, [searchFilter]);
-	useEffect(() => {}, [commentInquiry]);
+	useEffect(() => {
+		if (commentInquiry.search.commentRefId) {
+			getCommentsRefetch({ variables: { input: commentInquiry}}).then();
+		}
+	}, [commentInquiry]);
 
 	/** HANDLERS **/
 	const redirectToMemberPageHandler = async (memberId: string) => {

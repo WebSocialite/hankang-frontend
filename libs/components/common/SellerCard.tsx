@@ -16,7 +16,7 @@ interface SellerCardProps {
 }
 
 const SellerCard = (props: SellerCardProps) => {
-	const { seller: seller } = props;
+	const { seller: seller, likeMemberHandler } = props;
 	const device = useDeviceDetect();
 	const user = useReactiveVar(userVar);
 	const imagePath: string = seller?.memberImage
@@ -65,7 +65,7 @@ const SellerCard = (props: SellerCardProps) => {
 							<RemoveRedEyeIcon />
 						</IconButton>
 						<Typography className="view-cnt">{seller?.memberViews}</Typography>
-						<IconButton color={'default'}>
+						<IconButton color={'default'} onClick={() => likeMemberHandler(user, seller?._id)}>
 							{seller?.meLiked && seller?.meLiked[0]?.myFavorite ? (
 								<FavoriteIcon color={'primary'} />
 							) : (
