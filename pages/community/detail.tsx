@@ -5,7 +5,7 @@ import useDeviceDetect from '../../libs/hooks/useDeviceDetect';
 import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
 import { Button, Stack, Typography, Tab, Tabs, IconButton, Backdrop, Pagination } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import Moment from 'react-moment';
 import { userVar } from '../../apollo/store';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
@@ -21,6 +21,8 @@ import { T } from '../../libs/types/common';
 import EditIcon from '@mui/icons-material/Edit';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { BoardArticle } from '../../libs/types/board-article/board-article';
+import { CREATE_COMMENT, LIKE_TARGET_BOARD_ARTICLE, UPDATE_COMMENT } from '../../apollo/user/mutation';
+import { GET_BOARD_ARTICLE, GET_COMMENTS } from '../../apollo/user/query';
 const ToastViewerComponent = dynamic(() => import('../../libs/components/community/TViewer'), { ssr: false });
 
 export const getStaticProps = async ({ locale }: any) => ({
@@ -57,6 +59,46 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 	const [boardArticle, setBoardArticle] = useState<BoardArticle>();
 
 	/** APOLLO REQUESTS **/
+
+
+	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE); 
+	const [createComment] = useMutation(CREATE_COMMENT); 
+	const [updateComment] = useMutation(UPDATE_COMMENT); 
+
+
+	const {
+		loading: boardArticleLoading,
+		data: boardArticleData,
+		error: boardArticleError,
+		refetch : boardArticleRefetch,
+	} = useQuery(GET_BOARD_ARTICLE, {
+		fetchPolicy: 'network-only',
+		variables: { input: articleId },
+		notifyOnNetworkStatusChange : true,
+		onCompleted: (data: any) => {
+			setBoardArticle(data?.getBoardArticle);
+			if(data?.getBoardArticle?.memberData?.memberImage) {
+				setMemberImage(`${process.env.REACT_APP_API_URL}/${data?.getBoardArticle?.memberData?.memberImage}`);
+			}
+		},
+	});
+
+	const {
+		loading: getCommentsLoading,
+		data: getCommentsData,
+		error: getCommentsError,
+		refetch : getCommentsRefetch,
+	} = useQuery(GET_COMMENTS, {
+		fetchPolicy: 'cache-and-network',
+		variables: { input: searchFilter },
+		notifyOnNetworkStatusChange : true,
+		onCompleted(data: any) {
+			setComments(data.getComments.list);
+			setTotal(data.getComments?.metaCounter[0]?.total || 0);
+		},
+	});
+
+
 
 	/** LIFECYCLES **/
 	useEffect(() => {
