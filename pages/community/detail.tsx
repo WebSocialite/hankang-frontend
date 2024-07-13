@@ -13,16 +13,19 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ChatIcon from '@mui/icons-material/Chat';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
-import { CommentsInquiry } from '../../libs/types/comment/comment.input';
+import { CommentInput, CommentsInquiry } from '../../libs/types/comment/comment.input';
 import { Comment } from '../../libs/types/comment/comment';
 import dynamic from 'next/dynamic';
-import { CommentStatus } from '../../libs/enums/comment.enum';
+import { CommentGroup, CommentStatus } from '../../libs/enums/comment.enum';
 import { T } from '../../libs/types/common';
 import EditIcon from '@mui/icons-material/Edit';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { BoardArticle } from '../../libs/types/board-article/board-article';
 import { CREATE_COMMENT, LIKE_TARGET_BOARD_ARTICLE, UPDATE_COMMENT } from '../../apollo/user/mutation';
 import { GET_BOARD_ARTICLE, GET_COMMENTS } from '../../apollo/user/query';
+import { Messages } from '../../libs/config';
+import { sweetConfirmAlert, sweetMixinErrorAlert, sweetMixinSuccessAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { CommentUpdate } from '../../libs/types/comment/comment.update';
 const ToastViewerComponent = dynamic(() => import('../../libs/components/community/TViewer'), { ssr: false });
 
 export const getStaticProps = async ({ locale }: any) => ({
@@ -117,10 +120,91 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 		);
 	};
 
-	const creteCommentHandler = async () => {};
+	const likeBoArticleHandler = async (user: any, id: any ) => {
+		try {
+			if(likeLoading) return;
+			if(!id) return;
+			if(!user._id) throw new Error(Messages.error2);
 
-	const updateButtonHandler = async (commentId: string, commentStatus?: CommentStatus.DELETE) => {};
+			setLikeLoading(true);
+			await likeTargetBoardArticle({
+				variables: {input: id}
+			});
+			await boardArticleRefetch({ input: articleId });
 
+			await sweetTopSmallSuccessAlert("success", 800);
+		} catch (err: any) {
+			console.log('ERROR likeBoArticleHandler', err.message );
+			sweetMixinErrorAlert(err.message).then();
+		} finally {
+			setLikeLoading(false);
+		}
+	};
+
+	const creteCommentHandler = async () => {
+		if(!comment) return;
+		try {
+			if(!user?._id) throw new Error(Messages.error2);
+			const commentInput: CommentInput = {
+				commentGroup: CommentGroup.ARTICLE,
+				commentRefId: articleId,
+				commentContent: comment,
+			};
+			await createComment({
+				variables: {
+					input: commentInput,
+				},
+		});
+			await getCommentsRefetch({ input: searchFilter});
+			await boardArticleRefetch({ input: articleId});
+			setComment('');
+			await sweetMixinSuccessAlert('Successfully commented');
+		
+		} catch (error: any) {
+			await sweetMixinErrorAlert(error.message);
+		}
+	};
+
+	const updateButtonHandler = async (commentId: string, commentStatus?: CommentStatus.DELETE) => {
+		try{
+			if(!user?._id) throw new Error(Messages.error2);
+			if(!commentId) throw new Error('Select a comment to update!');
+			if(updatedComment === comments?.find((comment) => comment?._id === commentId)?.commentContent) return;
+			
+			const updateData: CommentUpdate = {
+				_id: commentId,
+				...(commentStatus && {commentStatus: commentStatus}),
+				...(updatedComment && {commentContent: updatedComment}),
+			};
+			if(!updateData?.commentContent && !updateData?.commentStatus)
+				throw new Error("Provide date to update your comment!");
+			if(commentStatus) {
+				if (await sweetConfirmAlert("Do you want to delete the comment?")) {
+					await updateComment({
+						variables: {
+							input: updateData,
+						},
+					});
+					await sweetMixinSuccessAlert("Successfully deleted!")
+				} else return;
+			} else {
+				await updateComment({
+					variables: {
+						input: updateData,
+					},	
+				});
+				await sweetMixinSuccessAlert("Successfully updated!");
+			}
+			await getCommentsRefetch({ input: searchFilter});
+		}catch (error: any ) {
+			await sweetMixinErrorAlert(error.message);
+		} finally {
+			setOpenBackdrop(false);
+			setUpdatedComment('');
+			setUpdatedCommentWordsCnt(0);
+			setUpdatedCommentId('');
+		}
+	};
 	const getCommentMemberImage = (imageUrl: string | undefined) => {
 		if (imageUrl) return `${process.env.REACT_APP_API_URL}/${imageUrl}`;
 		else return '/img/community/articleImg.png';
@@ -237,8 +321,11 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 										</Stack>
 										<Stack className="info">
 											<Stack className="icon-info">
-												{boardArticle?.meLiked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
-
+											{boardArticle?.meLiked && boardArticle?.meLiked[0]?.myFavorite ? (
+												 <ThumbUpAltIcon onClick={() => likeBoArticleHandler(user, boardArticle?._id)} /> 
+												) : (
+												 <ThumbUpOffAltIcon onClick={() => likeBoArticleHandler(user, boardArticle?._id)} />
+												)}
 												<Typography className="text">{boardArticle?.articleLikes}</Typography>
 											</Stack>
 											<Stack className="divider"></Stack>
@@ -248,11 +335,7 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 											</Stack>
 											<Stack className="divider"></Stack>
 											<Stack className="icon-info">
-												{boardArticle?.articleComments && boardArticle?.articleComments > 0 ? (
-													<ChatIcon />
-												) : (
-													<ChatBubbleOutlineRoundedIcon />
-												)}
+											{total > 0 ? <ChatIcon /> : <ChatBubbleOutlineRoundedIcon /> }
 
 												<Typography className="text">{boardArticle?.articleComments}</Typography>
 											</Stack>
@@ -264,7 +347,12 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
 									<Stack className="like-and-dislike">
 										<Stack className="top">
 											<Button>
-												{boardArticle?.meLiked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
+											{boardArticle?.meLiked && boardArticle?.meLiked[0]?.myFavorite ? (
+												 <ThumbUpAltIcon onClick={() => likeBoArticleHandler(user, boardArticle?._id)} /> 
+												) : (
+												 <ThumbUpOffAltIcon onClick={() => likeBoArticleHandler(user, boardArticle?._id)} />
+												)}
+												
 												<Typography className="text">{boardArticle?.articleLikes}</Typography>
 											</Button>
 										</Stack>
