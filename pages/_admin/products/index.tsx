@@ -14,6 +14,10 @@ import { Product } from '../../../libs/types/product/product';
 import { ProductStatus } from '../../../libs/enums/product.enum';
 import { sweetConfirmAlert, sweetErrorHandling } from '../../../libs/sweetAlert';
 import { ProductUpdate } from '../../../libs/types/product/product.update';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_ALL_PRODUCTS_BY_ADMIN } from '../../../apollo/admin/query';
+import { REMOVE_PRODUCT_BY_ADMIN, UPDATE_PRODUCT_BY_ADMIN } from '../../../apollo/admin/mutation';
+import { T } from '../../../libs/types/common';
 
 const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
 	const [anchorEl, setAnchorEl] = useState<[] | HTMLElement[]>([]);
@@ -26,19 +30,38 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
 	const [searchType, setSearchType] = useState('ALL');
 
 	/** APOLLO REQUESTS **/
+	const [updateProductByAdmin] = useMutation(UPDATE_PRODUCT_BY_ADMIN);
+	const [removeProductByAdmin] = useMutation(REMOVE_PRODUCT_BY_ADMIN);
 
+	const {
+		loading: getAllProductsByAdminLoading,
+		data: getAllProductsByAdminData,
+		error: getAllProductsByAdminError,
+		refetch : getAllProductsByAdminRefetch,
+	} = useQuery(GET_ALL_PRODUCTS_BY_ADMIN, {
+		fetchPolicy: 'network-only',
+		variables: { input: productsInquiry },
+		notifyOnNetworkStatusChange : true,
+		onCompleted: (data: T) => {
+			setProducts(data?.getAllProductsByAdmin?.list);
+			setProductsTotal(data?.getAllProductsByAdmin?.metaCounter[0]?.total ?? 0);
+		},
+	});
 	/** LIFECYCLES **/
-	useEffect(() => {}, [productsInquiry]);
-
+	useEffect(() => {
+		getAllProductsByAdminRefetch({ input: productsInquiry }).then();
+	}, [productsInquiry]);
 	/** HANDLERS **/
 	const changePageHandler = async (event: unknown, newPage: number) => {
 		productsInquiry.page = newPage + 1;
+		await getAllProductsByAdminRefetch({ input: productsInquiry});
 		setProductsInquiry({ ...productsInquiry });
 	};
 
 	const changeRowsPerPageHandler = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		productsInquiry.limit = parseInt(event.target.value, 10);
 		productsInquiry.page = 1;
+		await getAllProductsByAdminRefetch({ input: productsInquiry});
 		setProductsInquiry({ ...productsInquiry });
 	};
 
@@ -77,6 +100,13 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
 	const removeProductHandler = async (id: string) => {
 		try {
 			if (await sweetConfirmAlert('Are you sure to remove?')) {
+				await removeProductByAdmin({
+					variables: {
+						input: id,
+					},
+				});
+
+				await getAllProductsByAdminRefetch({ input: productsInquiry });
 			}
 			menuIconCloseHandler();
 		} catch (err: any) {
@@ -110,7 +140,14 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
 	const updateProductHandler = async (updateData: ProductUpdate) => {
 		try {
 			console.log('+updateData: ', updateData);
+			await updateProductByAdmin({
+				variables: {
+					input: updateData,
+				},
+			});
+
 			menuIconCloseHandler();
+			await getAllProductsByAdminRefetch({ input: productsInquiry});
 		} catch (err: any) {
 			menuIconCloseHandler();
 			sweetErrorHandling(err).then();
@@ -120,7 +157,7 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
 	return (
 		<Box component={'div'} className={'content'}>
 			<Typography variant={'h2'} className={'tit'} sx={{ mb: '24px' }}>
-				Property List
+				Product List
 			</Typography>
 			<Box component={'div'} className={'table-wrap'}>
 				<Box component={'div'} sx={{ width: '100%', typography: 'body1' }}>
