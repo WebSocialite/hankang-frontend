@@ -7,9 +7,11 @@ import { REACT_APP_API_URL,  } from '../../config';
 import { ProductInput } from '../../types/product/product.input';
 import axios from 'axios';
 import { getJwtToken } from '../../auth';
-import { sweetMixinErrorAlert } from '../../sweetAlert';
-import { useReactiveVar } from '@apollo/client';
+import { sweetErrorHandling, sweetMixinErrorAlert, sweetMixinSuccessAlert } from '../../sweetAlert';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { userVar } from '../../../apollo/store';
+import { CREATE_PRODUCT, UPDATE_PRODUCT } from '../../../apollo/user/mutation';
+import { GET_PRODUCT } from '../../../apollo/user/query';
 
 const AddProduct = ({ initialValues, ...props }: any) => {
 	const device = useDeviceDetect();
@@ -22,7 +24,20 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 	const user = useReactiveVar(userVar);
 
 	/** APOLLO REQUESTS **/
-	let getProductData: any, getProductLoading: any;
+	const [createProduct] = useMutation(CREATE_PRODUCT);
+	const [updateProduct] = useMutation(UPDATE_PRODUCT);
+
+	const {
+		loading: getProductLoading,
+		data: getProductData,
+		error: getProductError,
+		refetch : getProductRefetch,
+	} = useQuery(GET_PRODUCT, {
+		fetchPolicy: 'network-only',
+		variables: { input: router.query.ProductId, 
+			
+		},
+	});
 
 	/** LIFECYCLES **/
 	useEffect(() => {
@@ -101,7 +116,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 			insertProductData.productTitle === '' ||
 			insertProductData.productPrice === 0 || // @ts-ignore
 			insertProductData.productType === '' || // @ts-ignore
-			insertProductData.productLocation === '' || // @ts-ignore
+			//insertProductData.productLocation === '' || // @ts-ignore
 			insertProductData.productAddress === '' || // @ts-ignore
 			//insertProductData.productBarter === '' || // @ts-ignore
 			//insertProductData.productRent === '' ||
@@ -115,10 +130,46 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 		}
 	};
 
-	const insertProductHandler = useCallback(async () => {}, [insertProductData]);
+	const insertProductHandler = useCallback(async () => {
+		try {
+			const result = await createProduct({
+				variables: {
+					input: insertProductData,
+				},
+			});
+			await sweetMixinSuccessAlert('This Product has been created successfully');
+			await router.push({
+				pathname: '/mypage',
+				query: {
+					category: 'myProperties',
+				},
+			});
+		} catch (err: any) {
+			sweetErrorHandling(err).then();
+		}
+	}, [insertProductData]);
 
-	const updateProductHandler = useCallback(async () => {}, [insertProductData]);
+	const updateProductHandler = useCallback(async () => {
+		try {
+			//@ts-ignore
+			insertProductData._id = getProductData?.getProduct?._id;
+			const result = await updateProduct({
+				variables: {
+					input: insertProductData,
+				}
+			});
 
+			await sweetMixinSuccessAlert('This Product has been updated successfully');
+			await router.push({
+				pathname: '/mypage',
+				query: {
+					category: 'myProperties',
+				},
+			});
+		} catch (err: any) {
+			sweetErrorHandling(err).then();
+		}
+	}, [insertProductData]);
 	if (user?.memberType !== 'SELLER') {
 		router.back();
 	}
@@ -193,7 +244,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
 							<Stack className="config-row">
 								<Stack className="price-year-after-price">
-									<Typography className="title">Select Location</Typography>
+									{/* <Typography className="title">Select Location</Typography>
 									<select
 										// className={'select-description'}
 										// defaultValue={insertProductData.productLocation || 'select'}
@@ -207,15 +258,15 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 											<option selected={true} disabled={true} value={'select'}>
 												Select
 											</option>
-											{/* {productLocation.map((location: any) => (
+											{productLocation.map((location: any) => (
 												<option value={`${location}`} key={location}>
 													{location}
-												</option> */}
-											{/* ))} */}
+												</option>
+											))}
 										</>
-									</select>
-									<div className={'divider'}></div>
-									<img src={'/img/icons/Vector.svg'} className={'arrow-down'} />
+									</select> */}
+									{/* <div className={'divider'}></div>
+									<img src={'/img/icons/Vector.svg'} className={'arrow-down'} /> */}
 								</Stack>
 								<Stack className="price-year-after-price">
 									<Typography className="title">Address</Typography>
