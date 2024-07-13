@@ -3,13 +3,16 @@ import { NextPage } from 'next';
 import { Pagination, Stack, Typography } from '@mui/material';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { ProductCard } from './ProductCard';
-import { useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { Product } from '../../types/product/product';
 import { SellerProductsInquiry } from '../../types/product/product.input';
 import { T } from '../../types/common';
 import { ProductStatus } from '../../enums/product.enum';
 import { userVar } from '../../../apollo/store';
 import { useRouter } from 'next/router';
+import { UPDATE_PRODUCT } from '../../../apollo/user/mutation';
+import { GET_SELLER_PRODUCTS } from '../../../apollo/user/query';
+import { sweetConfirmAlert, sweetErrorHandling } from '../../sweetAlert';
 
 const MyProducts: NextPage = ({ initialInput, ...props }: any) => {
 	const device = useDeviceDetect();
@@ -20,7 +23,22 @@ const MyProducts: NextPage = ({ initialInput, ...props }: any) => {
 	const router = useRouter();
 
 	/** APOLLO REQUESTS **/
+	const [updateProduct] = useMutation(UPDATE_PRODUCT);
 
+	const {
+		loading: getSellerProductsLoading,
+		data: getSellerProductsData,
+		error: getSellerProductsError,
+		refetch : getSellerProductsRefetch,
+	} = useQuery(GET_SELLER_PRODUCTS, {
+		fetchPolicy: 'network-only',
+		variables: { input: searchFilter },
+		notifyOnNetworkStatusChange : true,
+		onCompleted: (data: T) => {
+			setSellerProducts(data?.getSellerProducts?.list);
+			setTotal(data?.getSellerProducts?.metaCounter[0]?.total);
+		},
+	});
 	/** HANDLERS **/
 	const paginationHandler = (e: T, value: number) => {
 		setSearchFilter({ ...searchFilter, page: value });
@@ -29,11 +47,42 @@ const MyProducts: NextPage = ({ initialInput, ...props }: any) => {
 	const changeStatusHandler = (value: ProductStatus) => {
 		setSearchFilter({ ...searchFilter, search: { productStatus: value } });
 	};
+	const deleteProductHandler = async (id: string) => {
+		try {
+			if (await sweetConfirmAlert('Are you sure to delete this Product?')) {
+				await updateProduct ({ 
+					variables: {
+						input: {
+							_id: id,
+							productStatus: "DELETE",
+						},
+					},
+				});
+				await getSellerProductsRefetch({ input: searchFilter });
+			}
+		}
+		catch (err: any) {
+			await sweetErrorHandling(err);
+		}
+	};
 
-	const deleteProductHandler = async (id: string) => {};
-
-	const updateProductHandler = async (status: string, id: string) => {};
-
+	const updateProductHandler = async (status: string, id: string) => {
+		try {
+			if (await sweetConfirmAlert(`Are you sure to change ${status} status?`)) {
+				await updateProduct ({ 
+					variables: {
+						input: {
+							_id: id,
+							productStatus: status,
+						},
+					},
+				});
+				await getSellerProductsRefetch({ input: searchFilter });
+			}
+		} catch (err: any) {
+			await sweetErrorHandling(err);
+		}
+	};
 	if (user?.memberType !== 'SELLER') {
 		router.back();
 	}
@@ -70,7 +119,8 @@ const MyProducts: NextPage = ({ initialInput, ...props }: any) => {
 							<Typography className="title-text">Date Published</Typography>
 							<Typography className="title-text">Status</Typography>
 							<Typography className="title-text">View</Typography>
-							<Typography className="title-text">Action</Typography>
+							{searchFilter.search.productStatus === 'ACTIVE' &&
+							<Typography className="title-text">Action</Typography>}
 						</Stack>
 
 						{sellerProducts?.length === 0 ? (

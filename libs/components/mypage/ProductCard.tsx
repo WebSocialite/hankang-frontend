@@ -116,7 +116,7 @@ export const ProductCard = (props: ProductCardProps) => {
 				<Stack className="views-box">
 					<Typography className="views">{product.productViews.toLocaleString()}</Typography>
 				</Stack>
-				{!memberPage && (
+				{!memberPage && product.productStatus === ProductStatus.ACTIVE && (
 					<Stack className="action-box">
 						<IconButton className="icon-button" onClick={() => pushEditProduct(product._id)}>
 							<ModeIcon className="buttons" />

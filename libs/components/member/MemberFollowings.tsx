@@ -14,6 +14,7 @@ interface MemberFollowingsProps {
 	initialInput: FollowInquiry;
 	subscribeHandler: any;
 	unsubscribeHandler: any;
+	likeMemberHandler: any;
 	redirectToMemberPageHandler: any;
 }
 
